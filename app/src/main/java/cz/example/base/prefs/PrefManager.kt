@@ -14,11 +14,13 @@ class PrefManager(context: Context) : KoinComponent {
 
         // Keys
         private const val PrefUsername = "$PreferencesName.username"
+        private const val PrefCredentials = "$PreferencesName.credentials"
     }
 
     val shared: SharedPreferences = PreferenceManager.getDefaultSharedPreferences(context)
 
     var username by stringPreference(PrefUsername)
+    var credentials by stringPreference(PrefCredentials)
 
     val isItGood by booleanPreference("IsItGood", true)
 

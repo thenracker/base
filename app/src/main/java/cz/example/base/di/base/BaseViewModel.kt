@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import cz.example.base.common.enums.State
 import kotlinx.coroutines.*
+import retrofit2.HttpException
 
 abstract class BaseViewModel : ViewModel() {
 
@@ -11,17 +12,20 @@ abstract class BaseViewModel : ViewModel() {
     private val handler = CoroutineExceptionHandler { _, ex -> ex.printStackTrace() }
     private val scope = CoroutineScope(Dispatchers.Default + job + handler)
 
-    protected val state = MutableLiveData<State>()
+    val state = MutableLiveData<State>()
 
-    protected fun launch(failure: ((Exception) -> Unit)? = null,
-                         defaultState: MutableLiveData<State>? = state,
-                         operation: (suspend () -> Unit) ) {
+    protected fun launch(
+        failure: ((Exception) -> Unit)? = null,
+        defaultState: MutableLiveData<State>? = state,
+        operation: (suspend () -> Unit)
+    ) {
         scope.launch {
             defaultState?.postValue(State.Loading)
             try {
                 operation()
                 defaultState?.postValue(State.Success)
-            } catch (e: Exception) {
+            } catch (e: HttpException) {
+                //e.response() /// Možnost mapovat vlastní chybu zde
                 failure?.invoke(e)
                 defaultState?.postValue(State.Failure(e))
             }
@@ -36,7 +40,7 @@ abstract class BaseViewModel : ViewModel() {
 
         }
 
-        launch (
+        launch(
             operation = {
 
             },

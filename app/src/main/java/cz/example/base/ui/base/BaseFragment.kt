@@ -6,11 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.LayoutRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import cz.example.base.R
+import cz.example.base.common.enums.State
 import cz.example.base.di.base.BaseViewModel
+import kotlinx.android.synthetic.main.fragment_base.*
 
 abstract class BaseFragment(@LayoutRes private val layoutId: Int) : Fragment(R.layout.fragment_base) {
 
@@ -27,6 +30,14 @@ abstract class BaseFragment(@LayoutRes private val layoutId: Int) : Fragment(R.l
             LayoutInflater.from(requireContext()).inflate(layoutId, this, true)
         }
         return view
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.state.observe {
+            progressBar.isVisible = it is State.Loading
+        }
     }
 
     protected fun <T> LiveData<T>.observe(function: (value: T) -> Unit) {
