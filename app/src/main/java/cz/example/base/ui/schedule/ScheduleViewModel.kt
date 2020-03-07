@@ -10,9 +10,16 @@ class ScheduleViewModel(private val scheduleRepo: ScheduleRepository) : BaseView
 
     val schedule = MutableLiveData<List<DummyResponse>>()
 
-    fun loadSchedule() {
+    fun loadSchedule() { // z rest
         launch {
             schedule.postValue(scheduleRepo.loadSchedule())
+        }
+    }
+
+    fun loadDummy() { // z db
+        launch {
+            val dummyList = scheduleRepo.loadDbDummy()
+            // todo - volat cokoliv co potřebuji
         }
     }
 }

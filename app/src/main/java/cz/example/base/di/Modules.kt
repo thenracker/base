@@ -1,11 +1,14 @@
 package cz.example.base.di
 
+import androidx.room.Room
+import cz.example.base.data.db.AppDatabase
 import cz.example.base.data.rest.ws.DummyWebService
 import cz.example.base.di.repositories.ScheduleRepository
 import cz.example.base.prefs.PrefManager
 import cz.example.base.ui.schedule.ScheduleViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.koin.android.ext.koin.androidApplication
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.module.Module
@@ -33,6 +36,19 @@ val restModule = module {
 val dbModule = module {
 
     // db
+    single {
+        Room
+            .databaseBuilder(
+                androidApplication(),
+                AppDatabase::class.java,
+                AppDatabase.Name
+            )
+            //.addMigrations(Migration_4_to_5)
+            .build()
+    }
+
+    // Dao
+    single { get<AppDatabase>().dummyDao() }
 }
 
 val allModules = listOf(appModule, restModule, dbModule)
