@@ -3,6 +3,7 @@ package cz.example.base.di
 import cz.example.base.prefs.PrefManager
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.Module
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 
@@ -26,4 +27,5 @@ val allModules = listOf(appModule, restModule, dbModule)
 
 private fun Module.preferences() {
     single(createdAtStart = true) { PrefManager(androidContext()) }
+    //single(named("MySecondPrefs") createdAtStart = true) { PrefManager(androidContext()) }
 }
