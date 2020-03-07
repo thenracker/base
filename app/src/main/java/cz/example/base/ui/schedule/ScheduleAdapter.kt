@@ -5,6 +5,7 @@ import android.view.View
 import cz.example.base.R
 import cz.example.base.data.rest.dto.DummyResponse
 import cz.example.base.ui.base.BaseListAdapterBuilder
+import kotlinx.android.synthetic.main.row_schedule.view.*
 
 class ScheduleAdapter(context: Context, private val onClick: (DummyResponse) -> Unit) :
     BaseListAdapterBuilder<DummyResponse>(context) {
@@ -13,6 +14,8 @@ class ScheduleAdapter(context: Context, private val onClick: (DummyResponse) -> 
 
     override fun View.onBind(item: DummyResponse) {
         // ToDo bind
+        name.text = item.title
+        descripiton.text = item.body
 
         setOnClickListener {
             onClick(item)
