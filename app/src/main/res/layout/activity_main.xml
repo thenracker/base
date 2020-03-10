@@ -8,7 +8,7 @@
 
     <fragment
         android:id="@+id/fragment"
-        android:name="cz.example.base.ui.schedule.ScheduleFragment"
+        android:name="cz.weissar.base.ui.dummy.DummyFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
