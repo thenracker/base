@@ -2,7 +2,7 @@ package cz.weissar.base.di.repositories
 
 import cz.weissar.base.data.db.dao.DummyDao
 import cz.weissar.base.di.base.BaseRepository
-import org.koin.core.inject
+import org.koin.core.component.inject
 
 class DummyRepository : BaseRepository() {
 

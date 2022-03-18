@@ -24,18 +24,12 @@ abstract class BaseListAdapterBuilder<T>(private val context: Context) {
     abstract fun View.onBind(item: T)
 
     open fun itemsTheSame(
-        oldItem: T,
-        newItem: T
-    ): Boolean {
-        return oldItem == newItem
-    }
+        oldItem: T, newItem: T,
+    ) = oldItem == newItem
 
     open fun contentsTheSame(
-        oldItem: T,
-        newItem: T
-    ): Boolean {
-        return oldItem == newItem
-    }
+        oldItem: T, newItem: T,
+    ) = oldItem == newItem
 
     fun getString(@StringRes id: Int) = context.getString(id)
     fun getDrawable(@DrawableRes id: Int) = ContextCompat.getDrawable(context, id)
@@ -46,17 +40,13 @@ abstract class BaseListAdapterBuilder<T>(private val context: Context) {
             object : DiffUtil.ItemCallback<T>() {
                 override fun areItemsTheSame(
                     oldItem: T,
-                    newItem: T
-                ): Boolean {
-                    return itemsTheSame(oldItem, newItem)
-                }
+                    newItem: T,
+                ) = itemsTheSame(oldItem, newItem)
 
                 override fun areContentsTheSame(
                     oldItem: T,
-                    newItem: T
-                ): Boolean {
-                    return contentsTheSame(oldItem, newItem)
-                }
+                    newItem: T,
+                ) = contentsTheSame(oldItem, newItem)
             }) {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =

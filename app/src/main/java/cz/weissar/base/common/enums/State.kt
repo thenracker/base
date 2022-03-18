@@ -1,8 +1,6 @@
 package cz.weissar.base.common.enums
 
-sealed class State {
-
-    object Loading : State()
-    object Success : State()
-    class Failure(val e: Exception) : State()
-}
+sealed class State
+object Loading : State()
+class Success(val any: Any?) : State()
+class Failure(val exception: Exception) : State()

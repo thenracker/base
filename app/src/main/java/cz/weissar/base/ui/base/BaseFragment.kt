@@ -4,48 +4,75 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.FrameLayout
-import androidx.annotation.LayoutRes
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.viewbinding.ViewBinding
 import com.google.android.material.snackbar.Snackbar
-import cz.weissar.base.R
-import cz.weissar.base.common.enums.State
+import cz.weissar.base.common.enums.Failure
+import cz.weissar.base.common.enums.Loading
+import cz.weissar.base.databinding.FragmentBaseBinding
 import cz.weissar.base.di.base.BaseViewModel
 import kotlinx.android.synthetic.main.fragment_base.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 
-abstract class BaseFragment(@LayoutRes private val layoutId: Int) : Fragment(R.layout.fragment_base) {
+typealias Inflater<Binding> = (LayoutInflater, ViewGroup, Boolean) -> Binding
 
-    abstract val viewModel : BaseViewModel
+abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
+
+    abstract val viewModel: BaseViewModel
+    abstract val inflater: Inflater<Binding>
+
+    private var _baseBinding: FragmentBaseBinding? = null
+    private var _binding: Binding? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        //(view.container as FrameLayout)
-        view?.findViewById<FrameLayout>(R.id.container).run {
-            LayoutInflater.from(requireContext()).inflate(layoutId, this, true)
+        savedInstanceState: Bundle?,
+    ) = FragmentBaseBinding.inflate(inflater, container, true)
+        .also {
+            _baseBinding = it
+            _binding = inflater(inflater, it.container, true)
         }
-        return view
-    }
+        .root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.state.observe {
-            progressBar.isVisible = it is State.Loading
+            progressBar.isVisible = it is Loading
 
-            if (it is State.Failure) {
-                Snackbar.make(view, it.e.message ?: "Uknown failure", Snackbar.LENGTH_LONG).show()
+            if (it is Failure) {
+                Snackbar.make(view, it.exception.message.orEmpty(), Snackbar.LENGTH_LONG).show()
             }
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _baseBinding = null
+    }
+
     protected fun <T> LiveData<T>.observe(function: (value: T) -> Unit) {
-        this.observe(viewLifecycleOwner, Observer { function(it) })
+        this.observe(viewLifecycleOwner) { function(it) }
+    }
+
+    protected fun <T> Flow<T>.observe(function: (value: T) -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            collect { function(it) }
+        }
+    }
+
+    protected fun <T> Flow<T>.observeRepeatOnStart(function: (value: T) -> Unit) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                collect { function(it) }
+            }
+        }
     }
 }

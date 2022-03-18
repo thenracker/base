@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
 import cz.weissar.base.common.extensions.booleanPreference
 import cz.weissar.base.common.extensions.stringPreference
-import org.koin.core.KoinComponent
+import org.koin.core.component.KoinComponent
 
 class PrefManager(context: Context) : KoinComponent {
 

@@ -7,7 +7,9 @@ import cz.weissar.base.data.rest.dto.DummyResponse
 import cz.weissar.base.ui.base.BaseListAdapterBuilder
 import kotlinx.android.synthetic.main.row_dummy.view.*
 
-class DummyAdapterBuilder(context: Context, private val onClick: (DummyResponse) -> Unit) :
+class DummyAdapterBuilder(
+    context: Context, private val onClick: (DummyResponse) -> Unit,
+) :
     BaseListAdapterBuilder<DummyResponse>(context) {
 
     override fun getRowLayout() = R.layout.row_dummy
