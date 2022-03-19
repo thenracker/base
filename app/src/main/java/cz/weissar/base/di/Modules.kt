@@ -8,6 +8,7 @@ import cz.weissar.base.data.services.SpaceXAPI
 import cz.weissar.base.di.repositories.DummyRepository
 import cz.weissar.base.di.repositories.SpaceXRepo
 import cz.weissar.base.ui.dummy.DummyViewModel
+import cz.weissar.base.ui.spacex.SpaceXVM
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidApplication
@@ -74,6 +75,7 @@ private fun Module.repositories() {
 
 private fun Module.viewModels() {
     viewModel { DummyViewModel(get()) }
+    viewModel { SpaceXVM(get()) }
 }
 
 private fun Module.apiRetrofit() {

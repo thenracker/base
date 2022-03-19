@@ -1,11 +1,8 @@
 package cz.weissar.base.ui.dummy
 
-import android.os.Bundle
-import android.view.View
 import cz.weissar.base.databinding.FragmentDummyBinding
 import cz.weissar.base.ui.base.BaseFragment
 import cz.weissar.base.ui.base.Inflater
-import kotlinx.android.synthetic.main.fragment_dummy.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DummyFragment : BaseFragment<FragmentDummyBinding>() {
@@ -14,23 +11,19 @@ class DummyFragment : BaseFragment<FragmentDummyBinding>() {
 
     private val adapter by lazy {
         DummyAdapterBuilder(requireContext()) {
-            // ToDO on click
+            // on click
         }.adapter
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        // init views
+    override fun FragmentDummyBinding.initViews() {
         recyclerView.adapter = adapter
+        viewModel.getOrLoadDummy() // Call method
+    }
 
-        // init observers
+    override fun FragmentDummyBinding.initObservers() {
         viewModel.dummyData.observe {
             adapter.submitList(it)
         }
-
-        // load
-        viewModel.getOrLoadDummy()
     }
 
     override val inflater: Inflater<FragmentDummyBinding>

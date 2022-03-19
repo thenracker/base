@@ -15,7 +15,7 @@ import com.google.android.material.snackbar.Snackbar
 import cz.weissar.base.common.enums.Failure
 import cz.weissar.base.common.enums.Loading
 import cz.weissar.base.databinding.FragmentBaseBinding
-import cz.weissar.base.di.base.BaseViewModel
+import cz.weissar.base.di.base.BaseVM
 import kotlinx.android.synthetic.main.fragment_base.*
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -24,11 +24,13 @@ typealias Inflater<Binding> = (LayoutInflater, ViewGroup, Boolean) -> Binding
 
 abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
 
-    abstract val viewModel: BaseViewModel
+    abstract val viewModel: BaseVM
     abstract val inflater: Inflater<Binding>
 
     private var _baseBinding: FragmentBaseBinding? = null
     private var _binding: Binding? = null
+
+    protected val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,15 +53,24 @@ abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
                 Snackbar.make(view, it.exception.message.orEmpty(), Snackbar.LENGTH_LONG).show()
             }
         }
+
+        _binding?.initViews()
+        _binding?.initObservers()
+        _binding?.initListeners()
     }
+
+    open fun Binding.initViews() { }
+    open fun Binding.initObservers() { }
+    open fun Binding.initListeners() { }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _binding = null
         _baseBinding = null
     }
 
     protected fun <T> LiveData<T>.observe(function: (value: T) -> Unit) {
-        this.observe(viewLifecycleOwner) { function(it) }
+        observe(viewLifecycleOwner) { function(it) }
     }
 
     protected fun <T> Flow<T>.observe(function: (value: T) -> Unit) {
@@ -68,7 +79,7 @@ abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
         }
     }
 
-    protected fun <T> Flow<T>.observeRepeatOnStart(function: (value: T) -> Unit) {
+    protected fun <T> Flow<T>.observeAndRepeatOnStart(function: (value: T) -> Unit) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 collect { function(it) }
