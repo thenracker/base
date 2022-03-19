@@ -1,6 +1,6 @@
 package cz.weissar.base.di.base
 
-import cz.weissar.base.data.rest.ws.DummyWebService
+import cz.weissar.base.data.services.DummyWebService
 import cz.weissar.base.common.prefs.PrefManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject

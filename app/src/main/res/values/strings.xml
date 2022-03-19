@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Base</string>
+    <string name="compose_fragment">Compose fragment example</string>
 </resources>

@@ -3,8 +3,10 @@ package cz.weissar.base.di
 import androidx.room.Room
 import cz.weissar.base.common.prefs.PrefManager
 import cz.weissar.base.data.db.AppDatabase
-import cz.weissar.base.data.rest.ws.DummyWebService
+import cz.weissar.base.data.services.DummyWebService
+import cz.weissar.base.data.services.SpaceXAPI
 import cz.weissar.base.di.repositories.DummyRepository
+import cz.weissar.base.di.repositories.SpaceXRepo
 import cz.weissar.base.ui.dummy.DummyViewModel
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -19,21 +21,20 @@ import java.util.concurrent.TimeUnit
 
 
 val appModule = module {
-
-    // view modely
-
-    // preferences
-    preferences()
-
-    schedule()
+    viewModels()
 }
+
 val restModule = module {
 
-    // retrofit
+    // retrofit & ktor REST clients
     httpClientAndConverter()
-    ws()
+    apiRetrofit()
+    apiKtor()
 }
-val dbModule = module {
+val dataModule = module {
+
+    preferences()
+    repositories()
 
     // db
     single {
@@ -51,7 +52,7 @@ val dbModule = module {
     single { get<AppDatabase>().dummyDao() }
 }
 
-val allModules = listOf(appModule, restModule, dbModule)
+val allModules = listOf(appModule, restModule, dataModule)
 
 private fun Module.preferences() {
     single(createdAtStart = true) {
@@ -59,15 +60,23 @@ private fun Module.preferences() {
             androidContext()
         )
     }
-    //single(named("MySecondPrefs") createdAtStart = true) { PrefManager(androidContext()) }
 }
 
-private fun Module.schedule() {
+private fun Module.apiKtor() {
+    single { SpaceXAPI() }
+}
+
+private fun Module.repositories() {
+    single { SpaceXRepo() }
     single { DummyRepository() }
+}
+
+
+private fun Module.viewModels() {
     viewModel { DummyViewModel(get()) }
 }
 
-private fun Module.ws() {
+private fun Module.apiRetrofit() {
     single { DummyWebService(get()) }
 }
 
@@ -81,9 +90,9 @@ fun createOkHttpClient(): OkHttpClient {
         .readTimeout(10L, TimeUnit.SECONDS)
         .callTimeout(10L, TimeUnit.SECONDS)
         .writeTimeout(10L, TimeUnit.SECONDS)
-        //.dns(getDns()) Problém je v DNS lookupu, který trvá desítky vteřin
         .addInterceptor { chain ->
             val restBuilder = chain.request().newBuilder()
+            // Possible failure handle
             chain.proceed(restBuilder.build())
         }
         .addInterceptor(HttpLoggingInterceptor().apply {

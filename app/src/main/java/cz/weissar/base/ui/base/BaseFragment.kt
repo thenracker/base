@@ -34,7 +34,7 @@ abstract class BaseFragment<Binding : ViewBinding> : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?,
-    ) = FragmentBaseBinding.inflate(inflater, container, true)
+    ) = FragmentBaseBinding.inflate(inflater, container, false)
         .also {
             _baseBinding = it
             _binding = inflater(inflater, it.container, true)

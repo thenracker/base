@@ -2,4 +2,6 @@
 <resources>
 
     <dimen name="padding_default">16dp</dimen>
+    <dimen name="radius_default">16dp</dimen>
+    <dimen name="radius_small">10dp</dimen>
 </resources>

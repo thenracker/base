@@ -6,10 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.MainActivity">
 
-<!--    <fragment-->
-<!--        android:id="@+id/fragment"-->
-<!--        android:name="cz.weissar.base.ui.dummy.DummyFragment"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"/>-->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragmentContainer"
+        android:name="cz.weissar.base.ui.dummy.DummyFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCompose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/padding_default"
+        android:text="@string/compose_fragment"
+        android:textColor="@color/white"
+        android:minHeight="60dp"
+        app:cornerRadius="@dimen/radius_small"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
